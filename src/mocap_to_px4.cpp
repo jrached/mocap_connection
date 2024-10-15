@@ -15,7 +15,7 @@ class MocapConnection : public rclcpp::Node
     MocapConnection() : Node("mocap_connection")
     {
         mocap_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/NX01/world", 10, std::bind(&MocapConnection::mocap_callback, this, _1));
-        px4_publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("/fmu/in/vehicle_mocap_odometry", 10);   
+        px4_publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("/fmu/in/vehicle_visual_odometry", 10);   
     }
 
     private:
@@ -26,9 +26,14 @@ class MocapConnection : public rclcpp::Node
     void mocap_callback(const geometry_msgs::msg::PoseStamped& msg){
         auto odom_msg = px4_msgs::msg::VehicleOdometry();
         odom_msg.timestamp = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
-        odom_msg.position[0] = msg.pose.position.x;
-        odom_msg.position[1] = msg.pose.position.y;
-        odom_msg.position[2] = msg.pose.position.z;
+        odom_msg.position[0] = msg.pose.position.y;
+        odom_msg.position[1] = msg.pose.position.x;
+        odom_msg.position[2] = -msg.pose.position.z;
+        odom_msg.q[0] = msg.pose.orientation.w;
+        odom_msg.q[1] = msg.pose.orientation.y;
+        odom_msg.q[2] = msg.pose.orientation.x;
+        odom_msg.q[3] = -msg.pose.orientation.z;
+        
 
         this->px4_publisher_->publish(odom_msg);
     }
