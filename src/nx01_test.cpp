@@ -14,7 +14,7 @@ class MocapConnection : public rclcpp::Node
     
     MocapConnection() : Node("mocap_connection")
     {
-        mocap_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/PX01/world", 10, std::bind(&MocapConnection::mocap_callback, this, _1));
+        mocap_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/NX01/world", 10, std::bind(&MocapConnection::mocap_callback, this, _1));
         px4_publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("/fmu/in/vehicle_visual_odometry", 10);   
     }
 

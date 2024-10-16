@@ -16,6 +16,10 @@ add_executable(mocap_to_px4 src/mocap_to_px4.cpp)
 ament_target_dependencies(mocap_to_px4 rclcpp px4_msgs geometry_msgs)
 install(TARGETS mocap_to_px4 DESTINATION lib/${PROJECT_NAME})
 
+add_executable(nx01_test src/nx01_test.cpp)
+ament_target_dependencies(nx01_test rclcpp px4_msgs geometry_msgs)
+install(TARGETS nx01_test DESTINATION lib/${PROJECT_NAME}) 
+
 ###Export information to downstream packages 
 ament_export_dependencies(ament_cmake rclcpp px4_msgs geometry_msgs)
 
