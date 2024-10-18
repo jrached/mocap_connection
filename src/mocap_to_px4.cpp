@@ -15,10 +15,14 @@ class MocapConnection : public rclcpp::Node
     
     MocapConnection() : Node("mocap_connection")
     {
+        // Define quality of service profile
+        rmw_qos_profile_t qos_profile = rmw_qos_profile_sensor_data;
+		auto qos = rclcpp::QoS(rclcpp::QoSInitialization(qos_profile.history, 5), qos_profile); 
+
         // Define publishers and subscriptions
-        mocap_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/PX01/world", 10, std::bind(&MocapConnection::mocap_callback, this, _1));
-        px4_publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("/fmu/in/vehicle_visual_odometry", 10); 
-        odom_subscription_ = this->create_subscription<px4_msgs::msg::VehicleOdometry>("/fmu/out/vehicle_odometry", 10, std::bind(&MocapConnection::odom_callback, this, _1));
+        mocap_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>("/PX01/world", qos, std::bind(&MocapConnection::mocap_callback, this, _1));
+        px4_publisher_ = this->create_publisher<px4_msgs::msg::VehicleOdometry>("/fmu/in/vehicle_visual_odometry", qos); 
+        odom_subscription_ = this->create_subscription<px4_msgs::msg::VehicleOdometry>("/fmu/out/vehicle_odometry", qos, std::bind(&MocapConnection::odom_callback, this, _1));
 
         //offboard_control_mode_publisher_ = this->create_publisher<px4_msgs::msg::OffboardControlMode>("/fmu/in/offboard_control_mode", 10);
 	
